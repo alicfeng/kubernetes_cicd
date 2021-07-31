@@ -29,6 +29,8 @@
 
 此方案的组件选型并非唯一的选择，以自动化构建 `Drone` 作为基准，其它组件的选择是灵活可变的，每个组件支持丰富的选择，比如代码协作工具支持 `Gitlab`、`Gogs`等，数据库支持`SQLite`、`MySQL`、`Postgres`等
 
+> 看不到 `mermaid` 吗？那就安装谷歌浏览器 [插件](https://chrome.google.com/webstore/detail/github-%2B-mermaid/goiiopgdnkogdbjmncgedmgpoajilohe/related) 
+
 ```mermaid
 graph LR
 components(组件)
