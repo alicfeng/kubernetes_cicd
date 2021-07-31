@@ -1,0 +1,17 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: sonarqube
+  namespace: istio-system
+spec:
+  gateways:
+    - timeqt-gateway
+  hosts:
+    - sonarqube.timeqt.com
+  http:
+    - route:
+        - destination:
+            host: sonarqube.devops.svc.cluster.local
+            port:
+              number: 9000
+

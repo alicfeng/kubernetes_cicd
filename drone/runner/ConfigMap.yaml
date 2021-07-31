@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: devops
+  name: drone-runner
+data:
+  drone-rpc-secret: 7b4eb5caee376cf81a2fcf7181e66175
+  drone-rpc-host: drone-server.devops.svc.cluster.local
+  drone-rpc-proto: http
+  drone-runner-capacity: "5"
+  drone-logs-trace: "true"
+  drone-debug: "true"
+  drone-namespace-default: devops
+  drone-node-selector-default: task:runner
+  drone-registry-plugin-skip-verify: "true"
+  drone-resource-limit-cpu: "1000"

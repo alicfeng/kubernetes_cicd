@@ -1,0 +1,17 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: drone
+  namespace: istio-system
+spec:
+  gateways:
+    - timeqt-gateway
+  hosts:
+    - drone.timeqt.com
+  http:
+    - route:
+        - destination:
+            host: drone-server.devops.svc.cluster.local
+            port:
+              number: 80
+

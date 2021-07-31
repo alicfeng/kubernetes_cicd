@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: devops
+  labels:
+    name: postgres
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: registry.cn-shenzhen.aliyuncs.com/tq_library/postgres:9.6.2
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: "0.25"
+            limits:
+              memory: 1Gi
+              cpu: "0.25"
+          env:
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres
+                  key: password
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres
+                  key: database
+            - name: TZ
+              value: Asia/Shanghai
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data/pgdata
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: postgres-data
+      nodeSelector:
+          cicd: "true"
+      tolerations: 
+        - key: "operation" 
+          operator: "Equal" 
+          value: "cicd"
+          effect: NoSchedule
+      restartPolicy: Always

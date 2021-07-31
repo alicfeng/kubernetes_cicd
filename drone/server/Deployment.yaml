@@ -1,0 +1,126 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drone-server
+  namespace: devops
+  labels:
+    name: drone-server
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: drone-server
+  template:
+    metadata:
+      labels:
+        app: drone-server
+    spec:
+      containers:
+        - name: drone-server
+          image: registry.cn-shenzhen.aliyuncs.com/tq_library/drone:1
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: "0.25"
+            limits:
+              memory: 1Gi
+              cpu: "0.25"
+          env:
+            - name: TZ
+              value: Asia/Shanghai
+            - name: DRONE_OPEN
+              valueFrom:
+                configMapKeyRef:
+                  name: drone-server
+                  key: drone-open
+            - name: DRONE_SERVER_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: drone-server
+                  key: drone-server-host
+            - name: DRONE_SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: drone-server
+                  key: drone-server-port
+            - name: DRONE_DEBUG
+              valueFrom:
+                configMapKeyRef:
+                  name: drone-server
+                  key: drone-debug
+            - name: DRONE_LOGS_TRACE
+              valueFrom:
+                configMapKeyRef:
+                  name: drone-server
+                  key: drone-logs-trace
+            - name: DRONE_GIT_ALWAYS_AUTH
+              valueFrom:
+                configMapKeyRef:
+                  name: drone-server
+                  key: drone-git-always-auth
+            - name: DRONE_GOGS
+              valueFrom:
+                configMapKeyRef:
+                  name: drone-server
+                  key: drone-gogs
+            - name: DRONE_GOGS_SKIP_VERIFY
+              valueFrom:
+                configMapKeyRef:
+                  name: drone-server
+                  key: drone-gogs-skip-verify
+            - name: DRONE_GOGS_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  name: drone-server
+                  key: drone-gogs-server
+            - name: DRONE_PROVIDER
+              valueFrom:
+                configMapKeyRef:
+                  name: drone-server
+                  key: drone-provider
+            - name: DRONE_SERVER_PROTO
+              valueFrom:
+                configMapKeyRef:
+                  name: drone-server
+                  key: drone-server-proto
+            - name: DRONE_RPC_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: drone-server
+                  key: drone-rpc-secret
+            - name: DRONE_USER_CREATE
+              valueFrom:
+                configMapKeyRef:
+                  name: drone-server
+                  key: drone-user-create
+            - name: DRONE_DATABASE_DRIVER
+              valueFrom:
+                configMapKeyRef:
+                  name: drone-server
+                  key: drone-database-driver
+            - name: DRONE_DATABASE_DATASOURCE
+              valueFrom:
+                configMapKeyRef:
+                  name: drone-server
+                  key: drone-database-source
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/drone
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: drone-server-data
+      nodeSelector:
+          cicd: "true"
+      tolerations: 
+        - key: "operation" 
+          operator: "Equal" 
+          value: "cicd"
+          effect: NoSchedule
+      restartPolicy: Always
+

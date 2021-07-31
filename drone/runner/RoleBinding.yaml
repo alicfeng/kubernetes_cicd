@@ -1,0 +1,14 @@
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: drone
+  namespace: devops
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: devops
+roleRef:
+  kind: Role
+  name: drone
+  apiGroup: rbac.authorization.k8s.io
+

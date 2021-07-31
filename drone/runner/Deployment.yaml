@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drone-runner
+  namespace: devops
+  labels:
+    app.kubernetes.io/name: drone-runner
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: drone-runner
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: drone-runner
+    spec:
+      containers:
+        - name: drone-runner
+          image: registry.cn-shenzhen.aliyuncs.com/tq_library/drone-runner-kube:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DRONE_RPC_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: drone-runner
+                  key: drone-rpc-host
+            - name: DRONE_RPC_PROTO
+              valueFrom:
+                configMapKeyRef:
+                  name: drone-runner
+                  key: drone-rpc-proto
+            - name: DRONE_RPC_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: drone-runner
+                  key: drone-rpc-secret
+            - name: DRONE_RUNNER_CAPACITY
+              valueFrom:
+                configMapKeyRef:
+                  name: drone-runner
+                  key: drone-runner-capacity
+            - name: DRONE_LOGS_TRACE
+              valueFrom:
+                configMapKeyRef:
+                  name: drone-runner
+                  key: drone-logs-trace
+            - name: DRONE_DEBUG
+              valueFrom:
+                configMapKeyRef:
+                  name: drone-runner
+                  key: drone-debug
+            - name: DRONE_NAMESPACE_DEFAULT
+              valueFrom:
+                configMapKeyRef:
+                  name: drone-runner
+                  key: drone-namespace-default
+            - name: DRONE_NODE_SELECTOR_DEFAULT
+              valueFrom:
+                configMapKeyRef:
+                  name: drone-runner
+                  key: drone-node-selector-default
+            - name: DRONE_REGISTRY_PLUGIN_SKIP_VERIFY
+              valueFrom:
+                configMapKeyRef:
+                  name: drone-runner
+                  key: drone-registry-plugin-skip-verify
+            - name: DRONE_RESOURCE_LIMIT_CPU
+              valueFrom:
+                configMapKeyRef:
+                  name: drone-runner
+                  key: drone-resource-limit-cpu
+            - name: DRONE_NODE_SELECTOR_DEFAULT
+              value: cicd:true
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: "0.25"
+            limits:
+              memory: 1Gi
+              cpu: "0.25"
+      nodeSelector:
+          cicd: "true"
+      tolerations: 
+        - key: "operation" 
+          operator: "Equal" 
+          value: "cicd"
+          effect: NoSchedule
+      restartPolicy: Always

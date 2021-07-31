@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sonarqube
+  namespace: devops
+  labels:
+    name: sonarqube
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sonarqube
+  template:
+    metadata:
+      labels:
+        app: sonarqube
+    spec:
+      containers:
+        - name: sonarqube
+          image: registry.cn-shenzhen.aliyuncs.com/tq_library/sonarqube:community-beta
+          resources:
+            requests:
+              memory: 1.5Gi
+              cpu: "1"
+            limits:
+              memory: 2Gi
+              cpu: "1.5"
+          env:
+            - name: TZ
+              value: Asia/Shanghai
+          volumeMounts:
+            - name: conf
+              mountPath: /opt/sonarqube/conf
+            - name: data
+              mountPath: /opt/sonarqube/data
+            - name: extensions
+              mountPath: /opt/sonarqube/extensions
+            - name: logs
+              mountPath: /opt/sonarqube/logs
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9000
+      volumes:
+        - name: conf
+          persistentVolumeClaim:
+            claimName: sonarqube-conf
+        - name: data
+          persistentVolumeClaim:
+            claimName: sonarqube-data
+        - name: extensions
+          persistentVolumeClaim:
+            claimName: sonarqube-extensions
+        - name: logs
+          persistentVolumeClaim:
+            claimName: sonarqube-logs
+      nodeSelector:
+          cicd: "true"
+      tolerations: 
+        - key: "operation" 
+          operator: "Equal" 
+          value: "cicd"
+          effect: NoSchedule
+      restartPolicy: Always
+

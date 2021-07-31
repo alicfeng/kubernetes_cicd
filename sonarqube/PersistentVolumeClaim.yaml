@@ -1,0 +1,66 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: sonarqube-conf
+  namespace: devops
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Gi
+  selector:
+    matchLabels:
+      alicloud-pvname: sonarqube-conf
+
+---
+
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: sonarqube-data
+  namespace: devops
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Gi
+  selector:
+    matchLabels:
+      alicloud-pvname: sonarqube-data
+
+---
+
+
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: sonarqube-extensions
+  namespace: devops
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Gi
+  selector:
+    matchLabels:
+      alicloud-pvname: sonarqube-extensions
+
+---
+
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: sonarqube-logs
+  namespace: devops
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Gi
+  selector:
+    matchLabels:
+      alicloud-pvname: sonarqube-logs

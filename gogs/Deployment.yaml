@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: git
+  namespace: devops
+  labels:
+    name: git
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: git
+  template:
+    metadata:
+      labels:
+        app: git
+    spec:
+      containers:
+        - name: gogs
+          image: registry.cn-shenzhen.aliyuncs.com/tq_library/gogs:0.12.3
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: "0.25"
+            limits:
+              memory: 1Gi
+              cpu: "0.25"
+          env:
+            - name: TZ
+              value: Asia/Shanghai
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+            - containerPort: 22
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: git-data
+      nodeSelector:
+          cicd: "true"
+      tolerations: 
+        - key: "operation" 
+          operator: "Equal" 
+          value: "cicd"
+          effect: NoSchedule
+      restartPolicy: Always
